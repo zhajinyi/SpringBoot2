@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jeeplus.modules.salessystem.dao.SalesDao">
+    <sql id="salesColumns">
+        a.id AS "id",
+        a.listTime AS "listTime",
+        a.customerid AS "customerid",
+        a.departmentsId AS "departmentsId",
+        a.sales AS "sales",
+        a.warehouse AS "warehouse",
+        a.typeNameid AS "typeNameid",
+        b.`name` AS  "customerName",
+        c.`name` AS  "officeName",
+        d.`name` AS  "roleName"
+
+    </sql>
+
+    <sql id="customerJoins">
+         JOIN invoicing_customer b ON
+        a.customerid=b.id
+    </sql>
+
+    <sql id="officeJoins">
+        JOIN sys_office c ON
+        a.departmentsId=c.id
+    </sql>
+
+    <sql id="roleJoins">
+       JOIN sys_role d ON
+        a.sales=d.id
+    </sql>
+
+    <sql id="salesInfoJoins">
+        JOIN invoicing_info e ON
+        a.id=e.id
+    </sql>
+
+<!--获得单个数据-->
+    <select id="get" resultType="Sales" parameterType="String" >
+        SELECT
+      <include refid="salesColumns"/>
+        FROM invoicing_sales a
+        <include refid="customerJoins"/>
+        <include refid="officeJoins"/>
+        <include refid="roleJoins"/>
+        <include refid="salesInfoJoins"/>
+        WHERE a.id = #{id}
+    </select>
+
+
+    <!--获得分页数据-->
+    <select id="findList" resultType="Sales" parameterType="Sales" >
+        SELECT
+        <include refid="salesColumns"/>
+        FROM invoicing_sales  a
+        <include refid="customerJoins"/>
+        <include refid="officeJoins"/>
+        <include refid="roleJoins"/>
+        <include refid="salesInfoJoins"/>
+       <where>
+            <if test="page !=null and page.orderBy != null and page.orderBy != ''">
+                ORDER BY ${page.orderBy}
+            </if>
+       </where>
+       ORDER BY a.id  DESC
+    </select>
+
+
+    <insert id="insert">
+        INSERT INTO invoicing_sales(
+        listTime,
+        customerid,
+        departmentsId,
+        sales,
+        warehouse,
+        typeNameid
+        ) VALUES (
+        #{listTime},
+        #{customerid},
+        #{departmentsId},
+        #{sales},
+        #{warehouse},
+        #{typeNameid}
+        )
+    </insert>
+
+
+
+    <update id="update">
+        UPDATE invoicing_sales SET
+        listTime = #{listTime},
+        customerid = #{customerid},
+        departmentsId = #{departmentsId},
+        sales = #{sales},
+        warehouse = #{warehouse}
+          typeNameid =#{typeNameid}
+        WHERE id = #{id}
+    </update>
+
+
+    <!--物理删除-->
+    <update id="delete">
+        DELETE FROM invoicing_sales
+        WHERE id = #{id}
+    </update>
+
+    <!--逻辑删除-->
+    <update id="deleteByLogic">
+        UPDATE invoicing_sales SET
+        del_flag = #{DEL_FLAG_DELETE}
+        WHERE id = #{id}
+    </update>
+
+
+    <!-- 根据实体名称和字段名称和字段值获取唯一记录 -->
+    <select id="findUniqueByProperty" resultType="Sales" statementType="STATEMENT">
+        select * FROM invoicing_sales  where ${propertyName} = '${value}'
+    </select>
+
+</mapper>

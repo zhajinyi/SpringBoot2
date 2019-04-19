@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jeeplus.modules.storage.dao.PutTypeDao">
+    <sql id="putTypeColumns">
+        p.`id`,
+        p.`num`,
+        p.`type`,
+        p.`is_out` AS isOut ,
+        p.`is_sys` AS isSys
+    </sql>
+
+    <sql id="putTypeJoins">
+    </sql>
+
+    <select id="get" resultType="PutType" >
+        SELECT
+        <include refid="putTypeColumns"/>
+        FROM put_type p
+        <include refid="putTypeJoins"/>
+        WHERE p.id = #{id}
+    </select>
+
+    <select id="findList" resultType="PutType">
+        SELECT
+        <include refid="putTypeColumns"/>
+        FROM put_type p
+        ORDER BY p.id ASC
+    </select>
+
+    <insert id="insert">
+        INSERT INTO put_type(
+        `num`,
+        `type`,
+        `is_out`,
+        `is_sys`
+        ) VALUES (
+        #{num},
+        #{type},
+        #{isOut},
+        #{isSys}
+        )
+    </insert>
+
+    <delete id="delete">
+        DELETE FROM put_type
+        WHERE id = #{id}
+    </delete>
+
+    <update id="update">
+        UPDATE put_type SET
+        `num` = #{num},
+        `type` = #{type},
+        `is_out` = #{isOut},
+        `is_sys` = #{isSys}
+        WHERE id = #{id}
+    </update>
+
+</mapper>
